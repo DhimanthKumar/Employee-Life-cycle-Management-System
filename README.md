@@ -34,14 +34,14 @@ This project consists of a **backend** powered by Django and a **frontend** powe
 
 ### Frontend Setup
 
-1. **Navigate to the Frontend Directory**:
-   ```bash
-   cd frontend
-   ```
-
-2. **Install Dependencies**:
+1. **Install Dependencies**:
    ```bash
    npm install
+   ```
+
+2. **Navigate to the Frontend Directory**:
+   ```bash
+   cd frontend
    ```
 
 3. **Run the Development Server**:
