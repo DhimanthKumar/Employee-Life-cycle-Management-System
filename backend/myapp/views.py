@@ -15,3 +15,9 @@ def get_data(request):
 @permission_classes([IsAuthenticated])
 def checkauthentication(request):
     return Response({"Message" : "Sucessful"})
+#Auth token sent as 'Authorization': 'Token `{token}`'
+@api_view()
+@permission_classes([IsAuthenticated])
+def CreateEmployee(request):
+    if not request.user.is_staff:
+        return Response( {"Message" : "UnAuthorized Access"}) 
