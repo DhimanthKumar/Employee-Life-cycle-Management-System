@@ -10,33 +10,53 @@ import { useContext } from 'react'
 import AuthContext from './components/authcontext'
 import { Avatar } from '@chakra-ui/react'
 import Userprofile from './components/userprofile'
+import Createuser from './components/createuser'
 function App() {
-  const { isAuthenticated, logout, userdata, profile } = useContext(AuthContext);
+  const { isAuthenticated, logout, userdata, profile ,isstaff} = useContext(AuthContext);
   // console.log(userdata,profile);
   console.log(userdata);
+  console.log(isstaff);
+  const style1={display: "block", width: "100%", height: "100%", padding: "5px 10px"}
   return (
 
     <div >
-      <div style={{ padding: "10px 20px", display: "flex", borderBottom: "1px solid gray" }}>
-        <Box className='rounded-md  hover:bg-gray-400 p-2 bg-blue-100'>
-          <Link to={'/Home'}>Home</Link></Box>
-        <Box className='ml-auto mr-5 rounded-md  hover:bg-gray-400 p-2 bg-blue-100 ' >
-          {isAuthenticated ? (
-            <button onClick={logout}>Logout</button> // ✅ Show logout when logged in
-          ) : (
-            <Link to="/login">Login</Link> // ✅ Show login when logged out
-          )}
-        </Box>
-        { isAuthenticated &&
-        <Box className='pt-1'>
-          <Link to="/profile"><Avatar src='https://www.w3schools.com/w3images/avatar3.png' width={30}></Avatar></Link>
-        </Box>}
-      </div>
+  <div style={{ padding: "10px 20px", display: "flex", borderBottom: "1px solid gray" }}>
+    <Box className="rounded-md hover:bg-gray-400 p-1 bg-blue-100">
+      <Link to={'/Home'} style={style1}>Home</Link>
+    </Box>
+
+    {isstaff && (
+      <Box className="rounded-md hover:bg-gray-400 p-1 bg-blue-100 ml-10">
+        <Link to="/Createuser" style={style1}>
+          CreateUser
+        </Link>
+      </Box>
+    )}
+
+    <Box className="ml-auto mr-5 rounded-md hover:bg-gray-400 p-1 bg-blue-100">
+      {isAuthenticated ? (
+        <button onClick={logout} style={style1}>Logout</button>
+      ) : (
+        <Link to="/login" style={style1}>
+          Login
+        </Link>
+      )}
+    </Box>
+
+    {isAuthenticated && (
+      <Box className="pt-1">
+        <Link to="/profile">
+          <Avatar src="https://www.w3schools.com/w3images/avatar3.png" width={30} />
+        </Link>
+      </Box>
+    )}
+  </div>
       <div>
         <Routes>
           <Route path="/Home" element={<Test />} />
           <Route path="/Login" element={<Login />} />
           <Route path='/profile' element={<Userprofile/>}/>
+          <Route path='/Createuser' element={<Createuser/>}/>
         </Routes></div>
     </div>
 

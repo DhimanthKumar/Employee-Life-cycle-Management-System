@@ -19,10 +19,10 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password=None, **extra_fields):
+    def create_superuser(self, username, email, password=None,is_staff=True,is_superuser=True, **extra_fields,):
         """Create and return a superuser"""
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_staff", is_staff)
+        extra_fields.setdefault("is_superuser", is_superuser)
         extra_fields.setdefault("is_active",True)
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
