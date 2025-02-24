@@ -2,21 +2,21 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./authcontext"; // ✅ Import AuthContext
-
+import Wrongdetail from "./incorrectdetails";
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const { login, authToken } = useContext(AuthContext); // ✅ Use context
+    const { login, isAuthenticated,userdata,profile } = useContext(AuthContext); // ✅ Use context
     const navigate = useNavigate(); 
-
+    const [incorrectdetails,setIncorrectdetails]=useState(false);
     // ✅ Redirect if already authenticated
     useEffect(() => {
-        if (authToken) {
+        if (isAuthenticated) {
             console.log("User is logged in, navigating...");
             navigate("/Home");
         }
-    }, [authToken, navigate]);
-
+    }, [isAuthenticated, navigate]);
+    console.log(userdata);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -27,8 +27,12 @@ const Login = () => {
 
             login(response.data.token); // ✅ Update global state
             navigate("/Home"); // ✅ Navigate after login
+            setIncorrectdetails(false)
+               
+            
         } catch (error) {
             console.error("Login failed", error);
+            setIncorrectdetails(true);
         }
     };
 
@@ -39,7 +43,8 @@ const Login = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="text-sm">Enter Username:</div>
                     <input
-                        className="border border-black p-1 w-full"
+                        style={{border:"1px solid black" , padding: " 1px 3px"}}
+
                         onChange={(e) => setUsername(e.target.value)}
                         value={username}
                     />
@@ -47,11 +52,11 @@ const Login = () => {
                     <div className="text-sm mt-2">Enter Password:</div>
                     <input
                         type="password"
-                        className="border border-black p-1 w-full"
+                        style={{border:"1px solid black",padding:"1px 3px"}}
                         onChange={(e) => setPassword(e.target.value)}
                         value={password}
                     />
-
+                    {incorrectdetails && <Wrongdetail/>}
                     <div className="bg-gray-400 hover:bg-gray-600 mt-3 p-2 rounded-md shadow-xl text-center">
                         <button type="submit" className="w-full text-white">Login</button>
                     </div>

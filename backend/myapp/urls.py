@@ -5,4 +5,5 @@ urlpatterns = [
     path('home' ,  views.get_data),
     path('auth',views.checkauthentication),
     path('generateToken' , obtain_auth_token),
+    path('Profile',views.UserDetails),
 ]

@@ -5,6 +5,7 @@ class CustomUser(AbstractUser):
     Role_Choices = (
         ('member', 'Team Member'),
         ('leader', 'Team Leader'),
+        # ('admin', 'admin'),
     )
     role = models.CharField(max_length=10, choices=Role_Choices, default='member')
     phone = models.CharField(max_length=15, blank=True, null=True)
