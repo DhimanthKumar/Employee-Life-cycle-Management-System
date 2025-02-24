@@ -27,9 +27,10 @@ function App() {
             <Link to="/login">Login</Link> // ✅ Show login when logged out
           )}
         </Box>
+        { isAuthenticated &&
         <Box className='pt-1'>
           <Link to="/profile"><Avatar src='https://www.w3schools.com/w3images/avatar3.png' width={30}></Avatar></Link>
-        </Box>
+        </Box>}
       </div>
       <div>
         <Routes>

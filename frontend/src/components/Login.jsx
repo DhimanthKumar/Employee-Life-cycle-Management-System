@@ -13,10 +13,10 @@ const Login = () => {
     useEffect(() => {
         if (isAuthenticated) {
             console.log("User is logged in, navigating...");
-            navigate("/Home");
+            navigate(-1);
         }
     }, [isAuthenticated, navigate]);
-    console.log(userdata);
+    // console.log(userdata);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -26,7 +26,7 @@ const Login = () => {
             });
 
             login(response.data.token); // ✅ Update global state
-            navigate("/Home"); // ✅ Navigate after login
+            navigate(-1); // ✅ Navigate after login
             setIncorrectdetails(false)
                
             

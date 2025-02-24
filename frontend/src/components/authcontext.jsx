@@ -1,11 +1,13 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null); // ✅ Ensure context is created
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
     const [userdata, setUserdata] = useState(null);
+    const navigate = useNavigate(); 
 
     // ✅ Automatically fetch user data if logged in
     useEffect(() => {
@@ -40,6 +42,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
         setIsAuthenticated(false);
         setUserdata(null); // ✅ Clear user data on logout
+        navigate('/home')
     };
 
     return (
