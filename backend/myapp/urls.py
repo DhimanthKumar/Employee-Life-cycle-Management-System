@@ -6,4 +6,5 @@ urlpatterns = [
     path('auth',views.checkauthentication),
     path('generateToken' , obtain_auth_token),
     path('Profile',views.UserDetails),
+    path('create' , views.RegisterUserView.as_view() , name='create'),
 ]
