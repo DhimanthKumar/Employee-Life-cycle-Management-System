@@ -1,11 +1,18 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "./authcontext";
 import { Box, HStack, Image, VStack } from "@chakra-ui/react";
+import { Link, useNavigate } from "react-router-dom";
 const Userprofile = () => {
-    const { userdata } = useContext(AuthContext);
-    console.log(userdata)
-    
-    return (
+    const { userdata ,isAuthenticated} = useContext(AuthContext);
+    const navigate = useNavigate();
+    // console.log(isAuthenticated)
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate("/Login");
+        }
+    }, [isAuthenticated, navigate]);
+    // console.log(userdata)
+    return isAuthenticated&&userdata ? (
         <div className="flex justify-center  m-10 h-screen">
             <div className="flex flex-col w-fit ">
                 <p style={{ textAlign: "center" }}>Personal Details</p>
@@ -43,7 +50,9 @@ const Userprofile = () => {
                 </VStack>
             </div>
         </div>
-    );
+    ) : <div>Loading...
+        <Link to={'/Login'} className="text-blue-500">SignIn</Link>
+    </div>;
     
 }
 export default Userprofile;
