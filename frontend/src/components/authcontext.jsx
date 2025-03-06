@@ -49,6 +49,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
         setIsAuthenticated(false);
         setUserdata(null); // ✅ Clear user data on logout
+        setIsstaff(false);
+        setIsadmin(false);
         navigate('/home')
     };
 
