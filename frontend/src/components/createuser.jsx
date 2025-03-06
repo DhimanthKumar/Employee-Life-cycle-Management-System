@@ -15,6 +15,19 @@ const Createuser = () => {
     const [useradmin,setUseradmin]=useState(false);
     const [role,setRole]=useState('');
     const [triedadmin,setTriedadmin]=useState(false);
+    const handleadmin = (e)=>{
+        
+        if(!userstaff){setUseradmin(e.target.checked); 
+            setUserstaff(e.target.checked);
+        }
+        else{setUseradmin(e.target.checked);
+            setTriedadmin(false);
+        }
+    }
+    const handlestaff = (e)=>{
+        setUserstaff(e.target.checked);
+        setUseradmin(false);
+    }
     return isstaff? (
         <Box maxWidth="400px" margin="auto" mt={10} className="w-fit" >
             <form>
@@ -51,8 +64,8 @@ const Createuser = () => {
                         
                     </HStack></FormControl>
                     <VStack>
-                        <label>Staff : <input type="checkbox"/></label>
-                        {isadmin&& <label>Admin : <input type="checkbox"/></label>}
+                        <label>Staff : <input type="checkbox" checked={userstaff} onChange={handlestaff}/></label>
+                        {isadmin&& <label>Admin : <input type="checkbox" onChange={handleadmin} checked={useradmin} /></label>}
                     </VStack>
 
                     <div className="bg-white hover:bg-gray-600  p-1 rounded-md shadow-xl text-center w-full">
