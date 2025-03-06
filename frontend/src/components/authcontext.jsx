@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [userdata, setUserdata] = useState(null);
     const navigate = useNavigate(); 
     const [isstaff,setIsstaff] = useState(false);
+    const [isadmin,setIsadmin]=useState(false);
     // ✅ Automatically fetch user data if logged in
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -20,6 +21,9 @@ export const AuthProvider = ({ children }) => {
                 setUserdata(response.data);
                 if(response.data.Staff){
                     setIsstaff(true);
+                }
+                if(response.data.Admin){
+                    setIsadmin(true);
                 }
             })
             .catch((error) => {
@@ -49,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, userdata,isstaff }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, userdata,isstaff ,isadmin}}>
             {children}
         </AuthContext.Provider>
     );

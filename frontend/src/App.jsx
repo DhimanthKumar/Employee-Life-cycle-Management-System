@@ -14,8 +14,7 @@ import Createuser from './components/createuser'
 function App() {
   const { isAuthenticated, logout, userdata, profile ,isstaff} = useContext(AuthContext);
   // console.log(userdata,profile);
-  console.log(userdata);
-  console.log(isstaff);
+
   const style1={display: "block", width: "100%", height: "100%", padding: "5px 10px"}
   return (
 
