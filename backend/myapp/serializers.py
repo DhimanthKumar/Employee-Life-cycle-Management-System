@@ -1,34 +1,119 @@
-# serializers.py
-"""
-This file defines the serializer for the CustomUser model.
-It ensures that sensitive information such as passwords is write-only and leverages the custom user manager.
-"""
-
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Role, Employee, Department
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
+    """
+    Serializer for the CustomUser model.
+
+    This serializer manages user creation and retrieval while handling related Employee, Role, Department, and Manager data.
+
+    Key Features:
+    - **Role Handling**: Links a user to a role using `SlugRelatedField`, fetching role names from the Role model.
+    - **Department Handling**: Ensures every non-admin user is assigned to a department.
+    - **Manager Assignment**: Allows linking to a manager (optional, except for lower-level employees).
+    - **Nested Employee Creation**: Automatically creates an associated Employee object when a new user is registered.
+    - **Password Handling**: Ensures passwords are write-only for security.
+
+    Fields:
+    - `role` (str): The role of the employee (e.g., "manager", "developer").
+    - `department` (str): The department where the employee belongs.
+    - `manager` (str, optional): The username of the manager supervising this employee.
+
+    Expected Request Data for Creating a User:
+    ```json
+    {
+        "username": "john_doe",
+        "email": "john@example.com",
+        "password": "securepassword123",
+        "phone": "1234567890",
+        "date_of_joining": "2024-04-03",
+        "role": "employee",
+        "department": "Engineering",
+        "manager": "jane_manager"
+    }
+    ```
+
+    Response Example:
+    ```json
+    {
+        "id": 1,
+        "username": "john_doe",
+        "email": "john@example.com",
+        "phone": "1234567890",
+        "date_of_joining": "2024-04-03",
+        "role": "employee",
+        "department": "Engineering",
+        "manager": "jane_manager"
+    }
+    ```
+
+    """
+
+    role = serializers.SlugRelatedField(
+        queryset=Role.objects.all(),
+        slug_field="role_name",
+        required=True,
+        source="employee.role",
+    )
+    department = serializers.SlugRelatedField(
+        queryset=Department.objects.all(),
+        slug_field="name",
+        required=True,
+        source="employee.department",
+    )
+    manager = serializers.SlugRelatedField(
+        queryset=Employee.objects.all(),
+        slug_field="user__username",
+        required=False,  # Allow manager to be optional for top-level users
+        source="employee.manager",
+    )
 
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "email", "phone", "role", "password", "is_staff", "is_superuser"]
-        extra_kwargs = {
-            "password": {"write_only": True},
-        }
+        fields = ["id", "username", "email", "phone", "password", "date_of_joining", "role", "department", "manager"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         """
-        Create and return a new user with an encrypted password.
+        Creates a new CustomUser and an associated Employee record.
+
+        Steps:
+        1. Extracts employee-related data (role, department, manager).
+        2. Creates the CustomUser object with the provided credentials.
+        3. Automatically associates an Employee object with the user.
+        4. Returns the newly created user.
+
+        Returns:
+            CustomUser: The created user instance.
         """
-        password = validated_data.pop("password", None)
-        user = CustomUser.objects.create_user(
-            username=validated_data["username"],
-            email=validated_data["email"],
-            password=password,
-            phone=validated_data.get("phone", ""),
-            role=validated_data.get("role", "member"),
-            is_staff=validated_data.get("is_staff", False),
-            is_superuser=validated_data.get("is_superuser", False),
-        )
+        employee_data = validated_data.pop("employee")  # Extract employee fields
+        role = employee_data["role"]
+        department = employee_data["department"]
+        manager = employee_data.get("manager", None)  # Manager is optional
+
+        # Create User
+        password = validated_data.pop("password")
+        user = CustomUser.objects.create_user(password=password, **validated_data)
+
+        # Create Employee entry linked to user
+        Employee.objects.create(user=user, role=role, department=department, manager=manager)
+
         return user
+
+    def to_representation(self, instance):
+        """
+        Ensures the API response returns role, department, and manager details properly.
+
+        This method customizes the default serialization:
+        - Converts role and department from foreign key references to their respective names.
+        - Converts manager to their username if assigned.
+
+        Returns:
+            dict: The serialized representation of the user.
+        """
+        representation = super().to_representation(instance)
+        representation["role"] = instance.employee.role.role_name if hasattr(instance, "employee") else None
+        representation["department"] = instance.employee.department.name if hasattr(instance, "employee") else None
+        representation["manager"] = instance.employee.manager.user.username if hasattr(instance, "employee") and instance.employee.manager else None
+        return representation
+
