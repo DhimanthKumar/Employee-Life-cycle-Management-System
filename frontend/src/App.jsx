@@ -11,6 +11,7 @@ import AuthContext from './components/authcontext'
 import { Avatar } from '@chakra-ui/react'
 import Userprofile from './components/userprofile'
 import Createuser from './components/createuser'
+import Creationstatus from './components/creationstatus'
 function App() {
   const { isAuthenticated, logout, userdata, profile ,isstaff} = useContext(AuthContext);
   // console.log(userdata,profile);
@@ -56,6 +57,7 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path='/profile' element={<Userprofile/>}/>
           <Route path='/Createuser' element={<Createuser/>}/>
+          <Route path='/Createuser/status' element={<Creationstatus/>}/> 
         </Routes></div>
     </div>
 

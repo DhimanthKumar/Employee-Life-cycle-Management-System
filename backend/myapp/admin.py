@@ -1,11 +1,19 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser,Employee,Role,Department
 class CustomUserAdmin(UserAdmin):
-    model = CustomUser
-    list_display = ("username", "email", "role", "is_staff", "is_active")
-    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("role", "phone")}),)
+    list_display = ( "username","email", "get_role")  # ✅ Use a custom method instead of 'role'
+
+    def get_role(self, obj):
+        """Fetch role from related Employee model"""
+        employee = Employee.objects.filter(user=obj).first()
+        return employee.role.role_name if employee and employee.role else "No Role"
+
+    get_role.short_description = "Role"  # Column title in Django admin
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Employee)
+admin.site.register(Role)
+admin.site.register(Department)
 
 
