@@ -112,8 +112,29 @@ class CustomUserSerializer(serializers.ModelSerializer):
             dict: The serialized representation of the user.
         """
         representation = super().to_representation(instance)
-        representation["role"] = instance.employee.role.role_name if hasattr(instance, "employee") else None
-        representation["department"] = instance.employee.department.name if hasattr(instance, "employee") else None
-        representation["manager"] = instance.employee.manager.user.username if hasattr(instance, "employee") and instance.employee.manager else None
+        representation["role"] = instance.employee.role.role_name if hasattr(instance, "employee") and instance.employee.role else None
+        representation["department"] = instance.employee.department.name if hasattr(instance, "employee") and instance.employee.department else None
+        representation["manager"] = instance.employee.manager.user.username if hasattr(instance, "employee") and instance.employee.manager and instance.employee.manager.user else None
         return representation
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
+class EmployeeSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(read_only=True)
+    role_name = serializers.SerializerMethodField()
+    department_name = serializers.SerializerMethodField()
+    manager_name = serializers.SerializerMethodField()
 
+    class Meta:
+        model = Employee
+        fields = ['id', 'user', 'role_name', 'department_name', 'manager_name']
+
+    def get_role_name(self, obj):
+        return obj.role.role_name if obj.role else None
+
+    def get_department_name(self, obj):
+        return obj.department.name if obj.department else None
+
+    def get_manager_name(self, obj):
+        return obj.manager.user.username if obj.manager and obj.manager.user else None

@@ -1,14 +1,28 @@
-import { VStack } from "@chakra-ui/react"
-import { Link } from "react-router-dom"
+import { VStack, Text, Button } from "@chakra-ui/react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const Creationstatus = ({message})=>{
-    // console.log(props);
-    console.log(message);
-    return <VStack className="flex flex-col justify-center items-center bg-blue-100">
-        
+const Creationstatus = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
 
-        {/* <p>{props}</p> */}
-        {/* <Link to={'/createuser'}>Createuser</Link> */}
-    </VStack>
-}
+    // This will get the message passed via navigate
+    const message = location.state?.message || "No status available";
+
+    return (
+        <VStack className="flex flex-col justify-center items-center h-screen bg-blue-100 gap-4">
+            <Text fontSize="2xl" fontWeight="bold">
+                {message}
+            </Text>
+
+            <Button colorScheme="blue" onClick={() => navigate("/createuser")}>
+                Create Another User
+            </Button>
+
+            <Button variant="outline" onClick={() => navigate("/")}>
+                Go to Home
+            </Button>
+        </VStack>
+    );
+};
+
 export default Creationstatus;

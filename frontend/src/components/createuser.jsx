@@ -1,112 +1,219 @@
 import { useContext, useEffect, useState } from "react";
-import AuthContext from "./authcontext";
-import { Box, Button, Flex, FormControl, FormLabel, Heading, HStack, Input, Radio, RadioGroup, VStack } from "@chakra-ui/react";
-import { Form, Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "./authcontext";
+import { Box, Button, Flex, Heading, Input, VStack } from "@chakra-ui/react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const Createuser = () => {
-    const { isAuthenticated, logout, userdata, isstaff ,isadmin} = useContext(AuthContext);
+    const { isstaff, isadmin, allowedroles, departments } = useContext(AuthContext);
     const navigator = useNavigate();
-    const [username,setUsername]=useState('');
-    
-    const [password,setPassword]=useState('');
-    const [email,setEmail]=useState('');
-    const [phone,setPhone]=useState('');
-    const [userstaff,setUserstaff]=useState(false);
-    const [useradmin,setUseradmin]=useState(false);
-    const [role,setRole]=useState('');
-    const [triedadmin,setTriedadmin]=useState(false);
-    const handlesubmit = (e)=>{
+    const inputstyle = { padding: "1px 2px" };
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [userstaff, setUserstaff] = useState(false);
+    const [useradmin, setUseradmin] = useState(false);
+    const [role, setRole] = useState("");
+    const [dateofjoin, setDateofjoin] = useState("")
+    const [department, setDepartment] = useState("")
+    const [managerslist,setManagerslist] = useState([])
+    const [manager,setManager]=useState("");
+    useEffect( () =>{
+        axios.get('http://127.0.0.1:8000/api/get_managers',{
+                  headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+               }).then(Response =>{
+                setManagerslist(Response.data.Managers);
+                console.log(Response.data.Managers);
+               })
+
+
+    } , [])
+    const handlesubmit = (e) => {
+        if (role == "" || department == "" || manager == "") {
+            console.log('as')
+            window.alert("Please select Role and Department");
+            return;
+        }
         e.preventDefault();
-        let reqbody ={
-            "username": username,
-            "email": email,
-            "password": password,
-            "role": role == 'TeamMember' ? 'member' : 'leader',
-                "is_staff":userstaff,
-            "is_superuser":useradmin,
-        }
-        if(phone.length==10){
-        reqbody = {...reqbody ,'phone' : phone}}
-        console.log(reqbody);
-        axios.post('http://127.0.0.1:8000/api/create', reqbody, {headers: { 
-            "Authorization": `Token ${localStorage.getItem("token")}`  // ❌ "Headers:" is incorrect
-        }})
-                    .then(Response => {if(Response.status==201) {                navigator("status" , {
-                        "message" : Response.message
-                    })
-                    }}
-                )
-            .catch(e=>{
-                navigator("status",{
-                    "message" : e.Error
-                })
+        console.log(role);
+        let reqbody = {
+            username,
+            email,
+            password,
+            role: role,
+            is_staff: userstaff,
+            is_superuser: useradmin,
+            date_of_joining: dateofjoin,
+            department: department,
+            manager:manager
+        };
+        if (phone.length === 10) reqbody = { ...reqbody, phone };
+        console.log(reqbody)
+        axios
+            .post("http://127.0.0.1:8000/api/create", reqbody, {
+                headers: { Authorization: `Token ${localStorage.getItem("token")}` },
             })
-        
-    }
-    const handleadmin = (e)=>{
-        
-        if(!userstaff){setUseradmin(e.target.checked); 
-            setUserstaff(e.target.checked);
-        }
-        else{setUseradmin(e.target.checked);
-            setTriedadmin(false);
-        }
-    }
-    const handlestaff = (e)=>{
-        setUserstaff(e.target.checked);
-        setUseradmin(false);
-    }
-    const inputstyle= {'padding' : '1px 2px'}
-    return isstaff? (
-        <Box maxWidth="400px" margin="auto" mt={10} className="w-fit" >
+            .then((res) => {
+                if (res.status === 201) {
+                    navigator("status", { message: res.message });
+                }
+            })
+            .catch((e) => {
+                navigator("status", { message: e.message });
+            });
+    };
+
+    return isstaff ? (
+        <Box mt={10} mx="auto" w="fit-content">
             <form onSubmit={handlesubmit}>
                 <VStack
-                    className="space-y-9 bg-blue-300 p-8 rounded-xl shadow-md w-full"
+                    spacing={6}
+                    className="bg-blue-300 p-8 rounded-xl shadow-md"
+                    w="fit-content"
                 >
-                    <Heading size="md" textAlign="center">Enter New User Details</Heading>
+                    <Heading size="md" textAlign="center">
+                        Enter New User Details
+                    </Heading>
 
-                    <FormControl isRequired>
-                        <FormLabel>Username</FormLabel>
-                        <Input style={inputstyle} placeholder="Enter your name" bg="white" minLength={8} maxLength={50} value={username} onChange={ (e)=>setUsername(e.target.value)} />
-                    </FormControl>
+                    {[
+                        { label: "Username", type: "text", val: username, setter: setUsername },
+                        { label: "Password", type: "password", val: password, setter: setPassword },
+                        { label: "Email", type: "email", val: email, setter: setEmail },
+                        { label: "Phone", type: "tel", val: phone, setter: setPhone },
+                    ].map(({ label, type, val, setter }) => (
+                        <Flex direction="column" w="fit-content" textAlign="left" key={label}>
+                            <label>{label}</label>
+                            <Input
+                                style={inputstyle}
+                                bg="white"
+                                type={type}
+                                minLength={type === "tel" ? 10 : 8}
+                                maxLength={50}
+                                value={val}
+                                onChange={(e) => setter(e.target.value)}
+                            />
+                        </Flex>
+                    ))}
 
-                    <FormControl isRequired>
-                        <FormLabel>Password</FormLabel>
-                        <Input style={inputstyle} type="password" bg="white" minLength={8} maxLength={50} placeholder="Enter password" value={password} onChange={ e=>setPassword(e.target.value)}/>
-                    </FormControl>
-                    <FormControl isRequired>
-                        <FormLabel>Email</FormLabel>
-                        <Input style={inputstyle} type="email" bg="white"  placeholder="Enter email" value={email} onChange={e=>setEmail(e.target.value)} />
-                    </FormControl>
+                    <Flex w="100%" justifyContent="flex-start">
+                        <Box>
+                            <label style={{ display: "block", marginBottom: "4px" }}>Role</label>
+                            <select
+                                className="bg-white"
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
+                                style={inputstyle}
+                            >
+                                <option value="">-- Choose Role --</option>
+                                {allowedroles.map((item) => (
+                                    <option key={item.id} value={item.role_name}>
+                                        {item.role_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </Box>
+                    </Flex>
 
-                    <FormControl>
-                        <FormLabel>Phone Number</FormLabel>
-                        <Input style={inputstyle} type="tel" bg="white" minLength={10} maxLength={10} placeholder="Enter MobileNumber" value={phone} onChange={e=>setPhone(e.target.value)} />
-                    </FormControl>
-                    <FormControl isRequired>
-                    <HStack>
-                    <FormLabel>Role</FormLabel>
-                        <select className="bg-white" value={role} onChange={e=>setRole(e.target.value)}>
-                            <option>TeamMember</option>
-                            <option>TeamLeader</option>
-                        </select>
-                        
-                    </HStack></FormControl>
-                    <VStack>
-                        <label>Staff : <input type="checkbox" checked={userstaff} onChange={handlestaff}/></label>
-                        {isadmin&& <label>Admin : <input type="checkbox" onChange={handleadmin} checked={useradmin} /></label>}
-                    </VStack>
+                    <Flex w="100%" justifyContent="flex-start">
+                        <Box>
+                            <label style={{ display: "block", marginBottom: "4px" }}>Department</label>
+                            <select
+                                className="bg-white"
+                                value={department}
+                                onChange={(e) => setDepartment(e.target.value)}
+                                style={inputstyle}
+                            >
+                                <option value="">-- Choose Department --</option>
+                                {departments.map((item) => (
+                                    <option key={item.id} value={item.name}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </Box>
+                    </Flex>
+                    <Flex w="100%" justifyContent="flex-start">
+                        <Box>
+                            <label style={{ display: "block", marginBottom: "4px" }}>Manager</label>
+                            <select
+                                className="bg-white"
+                                value={manager}
+                                onChange={(e) => setManager(e.target.value)}
+                                style={inputstyle}
+                            >
+                                <option value="">-- Choose Manager --</option>
+                               
+                                {
+                                managerslist.map((item) => (
+                                    <option key={item.user.username} value={item.user.username}>
+                                        {item.user.username}
+                                    </option>
+                                ))}
+                            </select>
+                        </Box>
+                    </Flex>
 
-                    <div className="bg-white hover:bg-gray-600  p-1 rounded-md shadow-xl text-center w-full">
-                        <button type="submit" className="w-full text-white">CreateUser</button>
-                    </div>
+                    <Flex w="100%" justifyContent="flex-start">
+                        <Box>
+                            <label style={{ display: "block", marginBottom: "4px" }}>Date Of Joining</label>
+                            <Input type="date" bg="white" style={inputstyle} value={dateofjoin}
+                                onChange={e => { setDateofjoin(e.target.value); }
+                                }
+                            />
+                        </Box>
+                    </Flex>
+
+
+                    {isadmin && (
+                        <Flex direction="column" w="fit-content" textAlign="left">
+                            <label>
+                                Staff:{" "}
+                                <input
+                                    type="checkbox"
+                                    checked={userstaff}
+                                    onChange={(e) => {
+                                        setUserstaff(e.target.checked);
+                                        setUseradmin(false);
+                                    }}
+                                />
+                            </label>
+                            <label>
+                                Admin:{" "}
+                                <input
+                                    type="checkbox"
+                                    checked={useradmin}
+                                    onChange={(e) => {
+                                        if (!userstaff) {
+                                            setUseradmin(e.target.checked);
+                                            setUserstaff(e.target.checked);
+                                        } else {
+                                            setUseradmin(e.target.checked);
+                                        }
+                                    }}
+                                />
+                            </label>
+                        </Flex>
+                    )}
+
+                    <button
+                        type="submit"
+                        className="!bg-gray-200 hover:!bg-gray-400 text-white font-medium py-2 px-5 rounded-lg transition duration-800 w-fit"
+                        style={{ padding: '8px 12px' }}
+                    >
+                        Create User
+                    </button>
+
                 </VStack>
             </form>
         </Box>
-    ) : (<VStack>
-        <p>You are not Authorised to use</p>
-        <Link to={'/Home'}>Home</Link>
-    </VStack>);
-}
+    ) : (
+        <VStack>
+            <p>You are not Authorised to use</p>
+            <Link to="/Home">Home</Link>
+        </VStack>
+    );
+};
 
 export default Createuser;
