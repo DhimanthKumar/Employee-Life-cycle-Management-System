@@ -10,9 +10,15 @@ from rest_framework.authtoken.views import obtain_auth_token
 from myapp.views.createuser import RegisterUserView
 from myapp.views.home import get_data
 from myapp.views.userdetails import UserDetails
+from myapp.views.getroles import roles_below_user
+from myapp.views.departments import departments
+from myapp.views.getmanagers import get_managers
 urlpatterns = [
     path('home', get_data),
     path('generateToken', obtain_auth_token),
     path('Profile', UserDetails),
     path('create', RegisterUserView.as_view(), name='create'),
+    path('get_all_roles' , roles_below_user),
+    path('departments',departments),
+    path('get_managers',get_managers),
 ]

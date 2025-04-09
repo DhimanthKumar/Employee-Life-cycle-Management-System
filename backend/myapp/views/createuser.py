@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from myapp.models import CustomUser
+from myapp.models import CustomUser,Role,Employee
 from myapp.serializers import CustomUserSerializer
 from rest_framework import generics, status
 from rest_framework.status import HTTP_400_BAD_REQUEST
@@ -68,12 +68,30 @@ class RegisterUserView(generics.GenericAPIView):
     serializer_class = CustomUserSerializer
 
     def post(self, request, *args, **kwargs):
-        # Check authorization for creating staff/superuser
+        # Superuser/Staff creation restriction
         if (
-            ("is_staff" in request.data and request.data["is_staff"]) or
-            ("is_superuser" in request.data and request.data["is_superuser"])
-        ) and (not request.user.is_superuser or not request.user.is_staff):
+            "is_superuser" in request.data and request.data['is_superuser'] and not request.user.is_superuser
+        ) or (
+            "is_staff" in request.data and request.data["is_staff"] and not request.user.is_superuser
+        ):
             return Response({"error": "Not Authorized"}, status=status.HTTP_403_FORBIDDEN)
+
+        # Role authority restriction for staff users (but not superuser)
+        if request.user.is_staff and not request.user.is_superuser:
+            try:
+                requested_role = Role.objects.get(role_name=request.data['role'])
+                
+                current_user_role = request.user.employee.role  # Assuming request.user has role FK
+                if requested_role.authority_level > current_user_role.authority_level:
+                    return Response(
+                        {"error": "Cannot assign role with higher authority than your own."},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except Role.DoesNotExist:
+                return Response(
+                    {"error": "Invalid role provided."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         # Validate required fields
         required_fields = ["username", "email", "password", "phone", "role", "date_of_joining"]
@@ -85,7 +103,6 @@ class RegisterUserView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Serialize and save the user
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
