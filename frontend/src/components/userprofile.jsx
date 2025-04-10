@@ -1,74 +1,95 @@
 import { useContext, useEffect } from "react";
-import {AuthContext} from "./authcontext";
-import { Box, HStack, Image, VStack } from "@chakra-ui/react";
+import { AuthContext } from "./authcontext";
+import {
+  Box,
+  VStack,
+  HStack,
+  Image,
+  Text,
+  Heading,
+  Badge,
+  Button,
+  Spinner,
+  Divider,
+  Flex,
+} from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
+
 const Userprofile = () => {
-    const { userdata, isAuthenticated } = useContext(AuthContext);
-    const navigate = useNavigate();
-    console.log(userdata);
-    // console.log(isAuthenticated)
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate("/Login");
-        }
-    }, [isAuthenticated, navigate]);
-    // console.log(userdata)
-    return isAuthenticated && userdata ? (
-        <div className="flex justify-center  m-10 h-screen">
-            <div className="flex flex-col w-fit ">
-                <p style={{ textAlign: "center" }}>Personal Details</p>
-                <VStack className="bg-blue-200 p-5 rounded-xl ">
-                    <HStack>
-                        <Image
-                            src="https://www.w3schools.com/w3images/avatar2.png"
-                            alt="John Doe"
-                            boxSize="100px"
-                            borderRadius="full"
-                            objectFit="cover"
-                        />
-                    </HStack>
-                    <HStack justifyContent="flex-start" className="w-full" >
-                        <Box>Name: </Box>
-                        <Box>{userdata.name}</Box>
-                    </HStack>
-                    <HStack justifyContent="flex-start" className="w-full">
-                        <Box>Email : </Box>
-                        <Box>{userdata.email}</Box>
-                    </HStack>
-                    <HStack justifyContent="flex-start" className="w-full">
-                        <Box>Phone Num : </Box>
-                        <Box>{userdata.phone}</Box>
-                    </HStack>
-                    <HStack justifyContent="flex-start" className="w-full">
-                        <Box>Manager: </Box>
-                        <Box>
-                            {userdata.manager ? (
-                                userdata.manager
-                            ) : (
-                                <Box color="red">No Manager Assigned</Box>
-                            )}
-                        </Box>
-                    </HStack>
-                    <HStack justifyContent="flex-start" className="w-full">
-                        <Box>Role : </Box>
-                        <Box>{userdata.role}</Box>
-                    </HStack>
+  const { userdata, isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-                    {userdata.Staff && <HStack justifyContent="flex-start" className="w-full">
-                        <Box>Staff : ✅ </Box>
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/Login");
+    }
+  }, [isAuthenticated, navigate]);
 
-                    </HStack>}
-                    {userdata.Admin && <HStack justifyContent="flex-start" className="w-full">
-                        <Box>Admin : ✅ </Box>
+  return isAuthenticated && userdata ? (
+    <Flex justify="center" align="center" h="80vh" px={4}>
+      <VStack
+        bg="blue.100"
+        p={6}
+        rounded="xl"
+        shadow="lg"
+        w={{ base: "100%", sm: "90%", md: "400px" }}
+        spacing={5}
+      >
+        <Heading size="md" textAlign="center" color="blue.700">
+          Personal Details
+        </Heading>
 
-                    </HStack>}
+        <Image
+          src="https://www.w3schools.com/w3images/avatar2.png"
+          alt="Profile"
+          boxSize="100px"
+          borderRadius="full"
+          objectFit="cover"
+        />
 
-                </VStack>
-            </div>
-        </div>
-    ) : <div>Loading...
-        <Link to={'/Login'} className="text-blue-500">SignIn</Link>
-    </div>;
+        <Divider borderColor="blue.300" />
 
-}
+        <ProfileRow label="Name" value={userdata.name} />
+        <ProfileRow label="Email" value={userdata.email} />
+        <ProfileRow label="Phone" value={userdata.phone} />
+        <ProfileRow
+          label="Manager"
+          value={
+            userdata.manager || (
+              <Text color="red.500" fontWeight="medium">
+                No Manager Assigned
+              </Text>
+            )
+          }
+        />
+        <ProfileRow label="Role" value={userdata.role} />
+
+        <HStack spacing={3} pt={2}>
+          {userdata.Staff && <Badge colorScheme="green">Staff</Badge>}
+          {userdata.Admin && <Badge colorScheme="purple">Admin</Badge>}
+        </HStack>
+      </VStack>
+    </Flex>
+  ) : (
+    <Flex justify="center" align="center" h="80vh" px={4}>
+      <VStack spacing={4}>
+        <Spinner size="lg" color="blue.500" />
+        <Text>Loading...</Text>
+        <Button as={Link} to="/Login" colorScheme="blue" size="sm">
+          Sign In
+        </Button>
+      </VStack>
+    </Flex>
+  );
+};
+
+const ProfileRow = ({ label, value }) => (
+  <HStack w="full" justifyContent="space-between" py={1}>
+    <Text fontWeight="medium" color="gray.700">
+      {label}:
+    </Text>
+    <Text color="gray.800">{value}</Text>
+  </HStack>
+);
+
 export default Userprofile;

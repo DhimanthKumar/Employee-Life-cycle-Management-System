@@ -1,4 +1,4 @@
-import { VStack, Text, Button } from "@chakra-ui/react";
+import { VStack, Text, Button, Box, Input } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Creationstatus = () => {
@@ -14,11 +14,10 @@ const Creationstatus = () => {
                 {message}
             </Text>
 
-            <Button colorScheme="blue" onClick={() => navigate("/createuser")}>
-                Create Another User
-            </Button>
-
-            <Button variant="outline" onClick={() => navigate("/")}>
+            <Button variant="solid" colorScheme="blue" onClick={() => navigate("/createuser")}>
+  Create Another User
+</Button>
+            <Button variant="solid" colorScheme="green" onClick={() => navigate("/")}>
                 Go to Home
             </Button>
         </VStack>
