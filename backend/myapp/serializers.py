@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Role, Employee, Department
+from .models import CustomUser, Role, Employee, Department,CheckIn
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """
@@ -125,16 +125,23 @@ class EmployeeSerializer(serializers.ModelSerializer):
     role_name = serializers.SerializerMethodField()
     department_name = serializers.SerializerMethodField()
     manager_name = serializers.SerializerMethodField()
-
+    authority_level=serializers.SerializerMethodField()
     class Meta:
         model = Employee
-        fields = ['id', 'user', 'role_name', 'department_name', 'manager_name']
+        fields = ['id', 'user', 'role_name', 'department_name', 'manager_name','authority_level']
 
     def get_role_name(self, obj):
         return obj.role.role_name if obj.role else None
-
+    def get_authority_level(self,obj):
+        return obj.role.authority_level if obj.role else None
     def get_department_name(self, obj):
         return obj.department.name if obj.department else None
 
     def get_manager_name(self, obj):
         return obj.manager.user.username if obj.manager and obj.manager.user else None
+class CheckInSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()  # shows username instead of user id
+
+    class Meta:
+        model = CheckIn
+        fields = ['id', 'user', 'check_in_time', 'check_out_time', 'status' , 'date']

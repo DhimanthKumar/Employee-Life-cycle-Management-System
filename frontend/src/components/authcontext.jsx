@@ -10,8 +10,12 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const [isstaff, setIsstaff] = useState(false);
     const [isadmin, setIsadmin] = useState(false);
-    const [allowedroles, setAllowedroles] = useState([])
-    const [departments,setDepartments]=useState([])
+    const [allowedroles, setAllowedroles] = useState([]);
+    const [departments,setDepartments]=useState([]);
+    const [checkintime,setCheckintime] = useState("")
+    const [checkouttime,setCheckouttime] = useState("")
+    const [ischeckedin,setIscheckedin]=useState(null)
+    const [ischeckedout , setIscheckedout] = useState(false);
     // ✅ Automatically fetch user data if logged in
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -29,6 +33,7 @@ export const AuthProvider = ({ children }) => {
             .then((response) => {
                 setUserdata(response.data);
                 fetchDepartments(token);
+                ischecked(token);
                 if (response.data.Staff) {
                     handleStaff(token);
                 }
@@ -42,7 +47,50 @@ export const AuthProvider = ({ children }) => {
                 logout();
             });
     };
-    
+    const ischecked = (token)=>{
+        axios.get('http://127.0.0.1:8000/api/user-checkin-checkout/',
+            {
+                headers: { Authorization: `Token ${token}` }
+            }
+        ).then(res =>{
+            setIscheckedin(res.data.checked_in);
+            if (res.data.checked_in){
+                setCheckintime(res.data.check_in_time);
+            setCheckouttime(res.data.check_out_time);
+            setIscheckedout(res.data.checked_out);
+            }
+
+        })
+    }
+    const checkin = (token)=>{
+        axios.post('http://127.0.0.1:8000/api/user-checkin-checkout/', {},
+            {
+                headers: { Authorization: `Token ${token}` }
+            }
+        ).then(res => {
+            setIscheckedin(true);
+            setCheckintime(res.data.check_in_time);
+            setCheckouttime(res.data.check_out_time);
+            // console.log(res.data.check_in_time);
+        }).catch(err => {
+            console.log(err);
+            console.log("error")
+        })
+    }
+    const checkout = (token)=>{
+        axios.put('http://127.0.0.1:8000/api/user-checkin-checkout/', {},
+            {
+                headers: { Authorization: `Token ${token}` }
+            }
+        ).then(res => {
+            setIscheckedout(true);
+            setCheckouttime(res.data.check_out_time);
+            // console.log(res.data.check_in_time);
+        }).catch(err => {
+            console.log(err);
+            console.log("error")
+        })
+    }
     const handleStaff = (token) => {
         setIsstaff(true);
         fetchAllowedRoles(token);
@@ -92,7 +140,8 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, login, logout,
-         userdata, isstaff, isadmin , allowedroles,departments }}>
+         userdata, isstaff, isadmin , allowedroles,departments ,checkintime,checkouttime,
+         checkin , ischeckedin , checkout , ischeckedout}}>
             {children}
         </AuthContext.Provider>
     );

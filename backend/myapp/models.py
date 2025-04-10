@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .managers import CustomUserManager
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.utils.timezone import now
 
 class CustomUser(AbstractUser):
     """
@@ -88,3 +90,21 @@ class Test(models.Model):
 
     def __str__(self):
         return self.a
+class CheckIn(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    check_in_time = models.DateTimeField(default=timezone.localtime)
+    check_out_time = models.DateTimeField(null=True, blank=True)
+
+    date = models.DateField(default=timezone.localdate)  # This will always store local date
+
+    status_choices = [
+        ('Checked In', 'Checked In'),
+        ('Checked Out', 'Checked Out'),
+    ]
+    status = models.CharField(max_length=20, choices=status_choices, default='Checked In')
+
+    class Meta:
+        unique_together = ('user', 'date')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.status} ({self.date})"

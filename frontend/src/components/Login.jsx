@@ -1,69 +1,107 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {AuthContext} from "./authcontext"; // ✅ Import AuthContext
+import { Box, Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import { AuthContext } from "./authcontext";
 import Wrongdetail from "./errors/incorrectdetails";
+
 const Login = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const { login, isAuthenticated,userdata,profile } = useContext(AuthContext); // ✅ Use context
-    const navigate = useNavigate(); 
-    const [incorrectdetails,setIncorrectdetails]=useState(false);
-    // ✅ Redirect if already authenticated
-    useEffect(() => {
-        if (isAuthenticated) {
-            console.log("User is logged in, navigating...");
-            navigate(-1);
-        }
-    }, [isAuthenticated, navigate]);
-    // console.log(userdata);
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post("http://127.0.0.1:8000/api/generateToken", {
-                username,
-                password,
-            });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { login, isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [incorrectdetails, setIncorrectdetails] = useState(false);
 
-            login(response.data.token); // ✅ Update global state
-            navigate(-1); // ✅ Navigate after login
-            setIncorrectdetails(false)
-               
-            
-        } catch (error) {
-            console.error("Login failed", error);
-            setIncorrectdetails(true);
-        }
-    };
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(-1);
+    }
+  }, [isAuthenticated, navigate]);
 
-    return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="border border-white p-6 rounded-md shadow-xl w-80 bg-gray-100">
-                <h2>Enter Details</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="text-sm">Enter Username:</div>
-                    <input
-                        style={{border:"1px solid black" , padding: " 1px 3px"}}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/generateToken", {
+        username,
+        password,
+      });
 
-                        onChange={(e) => setUsername(e.target.value)}
-                        value={username}
-                    />
+      login(response.data.token);
+      navigate(-1);
+      setIncorrectdetails(false);
+    } catch (error) {
+      console.error("Login failed", error);
+      setIncorrectdetails(true);
+    }
+  };
 
-                    <div className="text-sm mt-2">Enter Password:</div>
-                    <input
-                        type="password"
-                        style={{border:"1px solid black",padding:"1px 3px"}}
-                        onChange={(e) => setPassword(e.target.value)}
-                        value={password}
-                    />
-                    {incorrectdetails && <Wrongdetail/>}
-                    <div className="bg-gray-400 hover:bg-gray-600 mt-3 p-2 rounded-md shadow-xl text-center">
-                        <button type="submit" className="w-full text-white">Login</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
+  return (
+    <Flex
+      justify="center"
+      align="center"
+      py="100px"
+      maxH="70vh"
+      px={4}
+      bg="white" // clean background
+    >
+      <Box
+        bg="white"
+        p={8}
+        borderRadius="lg"
+        boxShadow="lg"
+        w="100%"
+        maxW="360px"
+        borderTop="4px solid"
+        borderColor="blue.400"
+      >
+        <Heading size="lg" textAlign="center" mb={6} color="blue.600">
+          Welcome Back
+        </Heading>
+
+        <form onSubmit={handleSubmit}>
+          <Text fontSize="sm" mb={1} color="gray.600">
+            Username
+          </Text>
+          <Input
+            placeholder="Enter username"
+            size="md"
+            mb={4}
+            borderRadius="md"
+            focusBorderColor="blue.400"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+
+          <Text fontSize="sm" mb={1} color="gray.600">
+            Password
+          </Text>
+          <Input
+            placeholder="Enter password"
+            type="password"
+            size="md"
+            mb={4}
+            borderRadius="md"
+            focusBorderColor="blue.400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          {incorrectdetails && <Wrongdetail />}
+
+          <Button
+            mt={4}
+            colorScheme="blue"
+            type="submit"
+            w="100%"
+            size="md"
+            borderRadius="md"
+          >
+            Login
+          </Button>
+        </form>
+      </Box>
+    </Flex>
+  );
 };
 
 export default Login;
