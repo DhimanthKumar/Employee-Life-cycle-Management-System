@@ -1,7 +1,7 @@
 import { Box, Button, HStack, VStack, Text, Center, Spinner } from "@chakra-ui/react";
 import { AuthContext } from "./authcontext";
 import { useContext, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion} from "framer-motion";
 
 const MotionButton = motion(Button);
 
@@ -90,9 +90,11 @@ const CheckInOut = () => {
 
     return (
         <Center minH="70vh">
-            <VStack spacing={6} p={6} borderRadius="lg" boxShadow="md" w="full" maxW="sm">
+            <VStack spacing={6} p={6} borderRadius="lg" boxShadow="md" w="full" maxW="sm" bg='teal.50'>
                 <Text fontSize="2xl" fontWeight="bold">
-                    Attendance
+                Check-In Panel
+
+
                 </Text>
 
                 <VStack spacing={2}>
@@ -108,7 +110,7 @@ const CheckInOut = () => {
                     )}
                     {ischeckedin && !ischeckedout && (
                         <Text color="blue.500" fontSize="lg">
-                            Time Passed: {timePassed}
+                            Working for: {timePassed}
                         </Text>
                     )}
                     {ischeckedin && ischeckedout && (
