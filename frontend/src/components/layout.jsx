@@ -2,7 +2,12 @@ import { Outlet, Link } from 'react-router-dom';
 import { Box, Avatar, Button, Flex, Spacer, Image } from '@chakra-ui/react';
 import { useContext } from 'react';
 import { AuthContext } from './authcontext';
-
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
 const Layout = () => {
   const { isAuthenticated, logout, isstaff } = useContext(AuthContext);
 
@@ -39,7 +44,7 @@ const Layout = () => {
           >
             Home
           </Button>
-
+          
           {isstaff && (
             <Button
               as={Link}
@@ -58,14 +63,19 @@ const Layout = () => {
 
         <Flex align="center" gap={3}>
           {isAuthenticated ? (
-            <Button
-              onClick={logout}
-              colorScheme="red"
-              variant="solid"
-              size="sm"
-            >
-              Logout
-            </Button>
+            <Menu>
+            <MenuButton>
+            <Avatar
+                src="https://www.w3schools.com/w3images/avatar3.png"
+                boxSize="32px"
+                _hover={{ boxShadow: 'md' }}
+              />
+            </MenuButton>
+            <MenuList>
+              <MenuItem as={Link} to="/profile">Profile</MenuItem> {/* Wrap MenuItem with Link */}
+              <MenuItem onClick={logout}>Logout</MenuItem>
+            </MenuList>
+          </Menu>
           ) : (
             <Button
               as={Link}
@@ -78,15 +88,7 @@ const Layout = () => {
             </Button>
           )}
 
-          {isAuthenticated && (
-            <Link to="/profile">
-              <Avatar
-                src="https://www.w3schools.com/w3images/avatar3.png"
-                boxSize="32px"
-                _hover={{ boxShadow: 'md' }}
-              />
-            </Link>
-          )}
+          
         </Flex>
       </Flex>
 
