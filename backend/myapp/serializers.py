@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Role, Employee, Department,CheckIn
+from .models import CustomUser, Role, Employee, Department,CheckIn, TaskAssignment, Team
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """
@@ -145,3 +145,53 @@ class CheckInSerializer(serializers.ModelSerializer):
     class Meta:
         model = CheckIn
         fields = ['id', 'user', 'check_in_time', 'check_out_time', 'status' , 'date']
+
+
+
+class TeamNameSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Team model that returns all team data including leader information.
+    """
+    team_leader_name = serializers.CharField(source='team_leader.user.username', read_only=True)
+    team_leader_authority = serializers.IntegerField(source='team_leader.role.authority_level', read_only=True)
+    member_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Team
+        fields = [
+            'id',
+            'name',
+            'description',
+            'team_leader_name',
+            'team_leader_authority',
+            'member_count',
+            'created_at'
+        ]
+
+    def get_member_count(self, obj):
+        return obj.members.count()
+
+from .models import TaskAssignment
+
+class TaskSerializer(serializers.ModelSerializer):
+    """
+    Serializer for TaskAssignment model that returns all task details.
+    """
+    assigned_to_username = serializers.CharField(source='assigned_to.user.username', read_only=True)
+    team_name = serializers.CharField(source='team.name', read_only=True)
+
+    class Meta:
+        model = TaskAssignment
+        fields = [
+            'id',
+            'title',
+            'description',
+            'due_date',
+            'completed',
+            'progress',
+            'priority',
+            'status',
+            'assigned_to_username',
+            'team_name',
+            'assigned_at'
+        ]

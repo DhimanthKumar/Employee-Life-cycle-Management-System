@@ -14,6 +14,8 @@ from myapp.views.getroles import roles_below_user
 from myapp.views.departments import departments
 from myapp.views.getmanagers import get_managers
 from myapp.views.checkin import usercheckIncheckOut
+from myapp.views.get_my_tasks import  get_my_tasks
+from myapp.views.get_teams import get_teams
 urlpatterns = [
     path('home', get_data),
     path('generateToken', obtain_auth_token),
@@ -23,4 +25,6 @@ urlpatterns = [
     path('departments',departments),
     path('get_managers',get_managers),
     path('user-checkin-checkout/', usercheckIncheckOut.as_view()),
+    path('api/my-team-tasks/', get_my_tasks, name='get_my_tasks'),
+    path('api/my-teams/', get_teams, name='get_teams'),
 ]
