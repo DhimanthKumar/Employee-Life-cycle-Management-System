@@ -1,6 +1,6 @@
 import { Outlet, Link } from 'react-router-dom';
-import { Box, Avatar, Button, Flex, Spacer, Image } from '@chakra-ui/react';
-import { useContext } from 'react';
+import { Box, Avatar, Button, Flex, Spacer, Image ,Icon} from '@chakra-ui/react';
+import { useContext, useState } from 'react';
 import { AuthContext } from './authcontext';
 import {
   Menu,
@@ -8,9 +8,11 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+
 const Layout = () => {
   const { isAuthenticated, logout, isstaff } = useContext(AuthContext);
-
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <Flex
@@ -63,17 +65,32 @@ const Layout = () => {
 
         <Flex align="center" gap={3}>
           {isAuthenticated ? (
-            <Menu>
-            <MenuButton>
+            <Menu 
+            isOpen={isOpen}
+      onOpen={() => setIsOpen(true)}
+      onClose={() => setIsOpen(false)}>
+            <MenuButton  display="flex" alignItems="center">
             <Avatar
                 src="https://www.w3schools.com/w3images/avatar3.png"
                 boxSize="32px"
                 _hover={{ boxShadow: 'md' }}
               />
+              <Icon
+  as={ChevronDownIcon}
+  boxSize={5}
+  transform={isOpen ? "rotate(180deg)" : "rotate(0deg)"}
+  transition="transform 0.3s ease"
+/>
             </MenuButton>
             <MenuList>
-              <MenuItem as={Link} to="/profile">Profile</MenuItem> {/* Wrap MenuItem with Link */}
-              <MenuItem onClick={logout}>Logout</MenuItem>
+              <MenuItem as={Link} to="/profile " 
+              _hover={{ bg: "gray.100" }}
+              _focus={{ bg: "gray.100" }}
+              >Profile</MenuItem> {/* Wrap MenuItem with Link */}
+              <MenuItem onClick={logout} 
+              _hover={{ bg: "gray.100" }}
+              _focus={{ bg: "gray.100" }}
+              >Logout</MenuItem>
             </MenuList>
           </Menu>
           ) : (

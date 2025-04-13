@@ -136,6 +136,8 @@ export const AuthProvider = ({ children }) => {
         navigate('/home');
         setAllowedroles([]);
         setDepartments([]);
+        window.location.reload();
+
     };
 
     return (
