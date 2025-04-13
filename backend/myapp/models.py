@@ -174,5 +174,24 @@ class TaskAssignment(models.Model):
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='not_started')
 
-    def str(self):
+    def clean(self):
+        # Ensure assigned_to is either team member or leader
+        if self.assigned_to and self.team:
+            is_member = self.team.members.filter(id=self.assigned_to.id).exists()
+            is_leader = self.team.team_leader and self.team.team_leader.id == self.assigned_to.id
+
+            if not (is_member or is_leader):
+                raise ValidationError(
+                    f"Employee {self.assigned_to.user.username} must be either a member or the leader of the team '{self.team.name}' to be assigned a task."
+                )
+
+        # Ensure due_date is today or later
+        if self.due_date and self.due_date < timezone.now().date():
+            raise ValidationError("Due date cannot be in the past.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
         return f"{self.title} -> {self.assigned_to.user.username}"
