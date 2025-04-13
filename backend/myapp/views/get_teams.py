@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from myapp.models import CustomUser,Role,Department,Employee,Team
-from myapp.serializers import CustomUserSerializer,RoleSerializer,DepartmentSerializer,EmployeeSerializer,TeamNameSerializer
+from myapp.serializers import CustomUserSerializer,DepartmentSerializer,EmployeeSerializer,TeamNameSerializer
 from myapp.serializers import CustomUserSerializer,DepartmentSerializer,EmployeeSerializer
 from rest_framework import generics, status
 from rest_framework.status import HTTP_400_BAD_REQUEST
@@ -42,15 +42,15 @@ def get_teams(request):
                 {'error': 'Your account does not have a role assigned.'},
                 status=status.HTTP_403_FORBIDDEN
             )
-
+        print(employee.role.authority_level)
         # Get all teams where user's authority > team leader's authority
         teams = Team.objects.filter(
             team_leader__isnull=False,
             team_leader__role__isnull=False,
-            team_leader__role__authority_level__lt=employee.role.authority_level
+            team_leader__role__authority_level__lte=employee.role.authority_level
         ).prefetch_related('members', 'team_leader__user', 'team_leader__role')
 
-        serializer = TeamSerializer(teams, many=True)
+        serializer = TeamNameSerializer(teams, many=True)
         return Response({'Teams': serializer.data})
 
     except Employee.DoesNotExist:

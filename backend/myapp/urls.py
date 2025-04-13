@@ -25,6 +25,6 @@ urlpatterns = [
     path('departments',departments),
     path('get_managers',get_managers),
     path('user-checkin-checkout/', usercheckIncheckOut.as_view()),
-    path('api/my-team-tasks/', get_my_tasks, name='get_my_tasks'),
-    path('api/my-teams/', get_teams, name='get_teams'),
+    path('my-team-tasks/', get_my_tasks, name='get_my_tasks'),
+    path('get_teams', get_teams, name='get_teams'),
 ]

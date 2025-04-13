@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser,Employee,Role,Department,CheckIn
+from .models import CustomUser,Employee,Role,Department,CheckIn,Team,TaskAssignment
 class CustomUserAdmin(UserAdmin):
     list_display = ( "username","email", "get_role")  # ✅ Use a custom method instead of 'role'
 
@@ -20,5 +20,5 @@ class CheckInAdmin(admin.ModelAdmin):
     list_display = ('user', 'date', 'check_in_time', 'check_out_time', 'status')
     list_filter = ('status', 'user' , 'date')
     search_fields = ('user__username',)
-
-
+admin.site.register(Team)
+admin.site.register(TaskAssignment)
