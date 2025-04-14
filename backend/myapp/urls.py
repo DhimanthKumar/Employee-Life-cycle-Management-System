@@ -16,6 +16,7 @@ from myapp.views.getmanagers import get_managers
 from myapp.views.checkin import usercheckIncheckOut
 from myapp.views.get_my_tasks import  get_my_tasks
 from myapp.views.get_teams import get_teams
+from myapp.views.get_subordinate_employees import get_subordinate_employees
 urlpatterns = [
     path('home', get_data),
     path('generateToken', obtain_auth_token),
@@ -27,4 +28,5 @@ urlpatterns = [
     path('user-checkin-checkout/', usercheckIncheckOut.as_view()),
     path('my-team-tasks/', get_my_tasks, name='get_my_tasks'),
     path('get_teams', get_teams, name='get_teams'),
+    path('api/employees/subordinates/', get_subordinate_employees, name='get_subordinate_employees')
 ]

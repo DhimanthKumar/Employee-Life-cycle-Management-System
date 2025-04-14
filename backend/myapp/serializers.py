@@ -195,3 +195,13 @@ class TaskSerializer(serializers.ModelSerializer):
             'team_name',
             'assigned_at'
         ]
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    email = serializers.CharField(source='user.email')
+    role_name = serializers.CharField(source='role.role_name')
+    authority_level = serializers.IntegerField(source='role.authority_level')
+    
+    class Meta:
+        model = Employee
+        fields = ['id', 'username', 'email', 'role_name', 'authority_level', 'department']
