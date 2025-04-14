@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import Userprofile from "./components/userprofile";
 import Createuser from "./components/createuser";
 import Creationstatus from "./components/creationstatus";
+import Createteam from "./components/createteam";
 import Home from "./components/home";
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="profile" element={<Userprofile />} />
         <Route path="Createuser" element={<Createuser />} />
         <Route path="Createuser/status" element={<Creationstatus />} />
+        <Route path="CreateTeam" element={<Createteam/>}/>
       </Route>
     </Routes>
   );

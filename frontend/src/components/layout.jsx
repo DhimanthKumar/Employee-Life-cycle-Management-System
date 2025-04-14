@@ -1,5 +1,5 @@
 import { Outlet, Link } from 'react-router-dom';
-import { Box, Avatar, Button, Flex, Spacer, Image ,Icon} from '@chakra-ui/react';
+import { Box, Avatar, Button, Flex, Spacer, Image, Icon } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
 import { AuthContext } from './authcontext';
 import {
@@ -46,7 +46,7 @@ const Layout = () => {
           >
             Home
           </Button>
-          
+
           {isstaff && (
             <Button
               as={Link}
@@ -59,40 +59,53 @@ const Layout = () => {
               Create User
             </Button>
           )}
+          {isstaff && (
+            <Button
+              as={Link}
+              to="/Createteam"
+              colorScheme="blue"
+              variant="ghost"
+              size="sm"
+              _hover={{ bg: 'blue.50' }}
+            >
+              Create Team
+            </Button>
+          )}
+
         </Flex>
 
         <Spacer />
 
         <Flex align="center" gap={3}>
           {isAuthenticated ? (
-            <Menu 
-            isOpen={isOpen}
-      onOpen={() => setIsOpen(true)}
-      onClose={() => setIsOpen(false)}>
-            <MenuButton  display="flex" alignItems="center">
-            <Avatar
-                src="https://www.w3schools.com/w3images/avatar3.png"
-                boxSize="32px"
-                _hover={{ boxShadow: 'md' }}
-              />
-              <Icon
-  as={ChevronDownIcon}
-  boxSize={5}
-  transform={isOpen ? "rotate(180deg)" : "rotate(0deg)"}
-  transition="transform 0.3s ease"
-/>
-            </MenuButton>
-            <MenuList>
-              <MenuItem as={Link} to="/profile " 
-              _hover={{ bg: "gray.100" }}
-              _focus={{ bg: "gray.100" }}
-              >Profile</MenuItem> {/* Wrap MenuItem with Link */}
-              <MenuItem onClick={logout} 
-              _hover={{ bg: "gray.100" }}
-              _focus={{ bg: "gray.100" }}
-              >Logout</MenuItem>
-            </MenuList>
-          </Menu>
+            <Menu
+              isOpen={isOpen}
+              onOpen={() => setIsOpen(true)}
+              onClose={() => setIsOpen(false)}>
+              <MenuButton display="flex" alignItems="center">
+                <Avatar
+                  src="https://www.w3schools.com/w3images/avatar3.png"
+                  boxSize="32px"
+                  _hover={{ boxShadow: 'md' }}
+                />
+                <Icon
+                  as={ChevronDownIcon}
+                  boxSize={5}
+                  transform={isOpen ? "rotate(180deg)" : "rotate(0deg)"}
+                  transition="transform 0.3s ease"
+                />
+              </MenuButton>
+              <MenuList>
+                <MenuItem as={Link} to="/profile "
+                  _hover={{ bg: "gray.100" }}
+                  _focus={{ bg: "gray.100" }}
+                >Profile</MenuItem> {/* Wrap MenuItem with Link */}
+                <MenuItem onClick={logout}
+                  _hover={{ bg: "gray.100" }}
+                  _focus={{ bg: "gray.100" }}
+                >Logout</MenuItem>
+              </MenuList>
+            </Menu>
           ) : (
             <Button
               as={Link}
@@ -105,7 +118,7 @@ const Layout = () => {
             </Button>
           )}
 
-          
+
         </Flex>
       </Flex>
 

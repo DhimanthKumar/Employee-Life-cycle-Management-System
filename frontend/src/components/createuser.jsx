@@ -32,7 +32,7 @@ const Createuser = () => {
   const [department, setDepartment] = useState("");
   const [managerslist, setManagerslist] = useState([]);
   const [manager, setManager] = useState("");
-
+  console.log(managerslist);
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/get_managers", {
       headers: { Authorization: `Token ${localStorage.getItem("token")}` },

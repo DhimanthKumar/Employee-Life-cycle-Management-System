@@ -120,7 +120,6 @@ const CheckInOut = () => {
                     )}
                 </VStack>
 
-                {console.log(ischeckedin)}
                 {
                     (!ischeckedin || (ischeckedin && !ischeckedout)) && (
                         <MotionButton
