@@ -205,3 +205,18 @@ class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ['id', 'username', 'email', 'role_name', 'authority_level', 'department']
+
+class TeamCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    description = serializers.CharField(required=False, allow_blank=True)
+    team_leader_id = serializers.IntegerField()
+    member_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=False,
+        default=[]
+    )
+    
+    def validate_name(self, value):
+        if Team.objects.filter(name=value).exists():
+            raise serializers.ValidationError("A team with this name already exists.")
+        return value
