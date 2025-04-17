@@ -17,25 +17,32 @@ class CustomUserSerializer(serializers.ModelSerializer):
     manager = serializers.SlugRelatedField(
         queryset=Employee.objects.all(),
         slug_field="user__username",
-        required=False,  # Allow manager to be optional for top-level users
+        required=False,
         source="employee.manager",
     )
+    date_of_joining = serializers.DateField(read_only=True)  # Make it read-only in serializer
 
     class Meta:
         model = CustomUser
         fields = ["id", "username", "email", "phone", "password", "date_of_joining", "role", "department", "manager"]
-        extra_kwargs = {"password": {"write_only": True}}
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "date_of_joining": {"read_only": True}  # Alternative way to make it read-only
+        }
 
     def create(self, validated_data):
-        # Existing creation logic
         employee_data = validated_data.pop("employee")
         role = employee_data["role"]
         department = employee_data["department"]
         manager = employee_data.get("manager", None)
 
         password = validated_data.pop("password")
+        
+        # Remove date_of_joining if it was accidentally included
+        validated_data.pop('date_of_joining', None)
+        
         user = CustomUser.objects.create_user(password=password, **validated_data)
-
+        
         # Create Employee record
         Employee.objects.create(user=user, role=role, department=department, manager=manager)
 

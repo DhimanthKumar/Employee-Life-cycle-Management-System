@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
     """
     email = models.EmailField(unique=True)  # Ensure email is unique
     phone = models.CharField(max_length=15, blank=True, null=True)
-    date_of_joining = models.DateField(null=True, blank=True)
+    date_of_joining = models.DateField(auto_now_add=True)
 
     objects = CustomUserManager()
 

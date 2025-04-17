@@ -12,6 +12,7 @@ import {
   Select as ChakraSelect,
   Text,
   useToast,
+  Checkbox
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
@@ -87,7 +88,7 @@ const Createuser = () => {
       "department": department,
       "manager": manager,
     };
-
+    console.log(payload);
     if (phone.length === 10) payload = { ...payload, phone };
 
     axios
@@ -103,18 +104,19 @@ const Createuser = () => {
             duration: 3000,
             isClosable: true,
           });
-          navigate("status", { state: { message: "User created successfully" } });
+          // navigate("status", { state: { message: "User created successfully" } });
         }
       })
-      .catch(() => {
-        toast({
-          title: "Error",
-          description: "User creation failed",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        navigate("status", { state: { message: "User creation failed" } });
+      .catch((response) => {
+        // toast({
+        //   title: "Error",
+        //   description: "User creation failed",
+        //   status: "error",
+        //   duration: 3000,
+        //   isClosable: true,
+        // });
+        console.log(response)
+        // navigate("status", { state: { message: "User creation failed" } });
       });
   };
 
@@ -239,7 +241,47 @@ const Createuser = () => {
               onChange={(e) => setManager(e ? e.value : "")}
             />
           </FormControl>
+          <Flex justify="space-between" w="100%" px={2}>
+  <Checkbox
+    isChecked={userstaff}
+    onChange={(e) => {
+      const checked = e.target.checked;
+      setUserstaff(checked);
+      if (!checked) {
+        setUseradmin(false); // If staff is unchecked, admin must be unchecked too
+      }
+    }}
+    colorScheme="blue"
+    size="md"
+    bg="white"
+    border="1px solid #CBD5E0"
+    borderRadius="md"
+    _checked={{ bg: "white", color: "blue.500" }}
+    iconColor="blue.500"
+  >
+    Staff
+  </Checkbox>
 
+  <Checkbox
+    isChecked={useradmin}
+    onChange={(e) => {
+      const checked = e.target.checked;
+      setUseradmin(checked);
+      if (checked) {
+        setUserstaff(true); // If admin is checked, staff must be checked too
+      }
+    }}
+    colorScheme="blue"
+    size="md"
+    bg="white"
+    border="1px solid #CBD5E0"
+    borderRadius="md"
+    _checked={{ bg: "white", color: "blue.500" }}
+    iconColor="blue.500"
+  >
+    Admin
+  </Checkbox>
+</Flex>
           {/* Submit Button */}
           <Button type="submit" colorScheme="blue" size="lg" width="full">
             Create User

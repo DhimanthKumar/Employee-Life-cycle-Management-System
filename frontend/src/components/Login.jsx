@@ -24,9 +24,9 @@ const Login = () => {
         username,
         password,
       });
-      console.log(response.data);
+      // console.log(response.data);
       login(response.data.token);
-      navigate(-1);
+      navigate('/home');
       setIncorrectdetails(false);
     } catch (error) {
       
@@ -106,7 +106,7 @@ const Login = () => {
   <Flex align="center" justify="space-between" mb={2}>
     <Text fontSize="sm" color="gray.600">Username:</Text>
     <Flex align="center" gap={2}>
-      <Text fontSize="sm" color="blue.600">guest</Text>
+      <Text fontSize="sm" color="blue.600">guest24</Text>
       <Tooltip label="Copy Username" fontSize="xs">
         <IconButton
           size="xs"
@@ -123,7 +123,7 @@ const Login = () => {
   <Flex align="center" justify="space-between">
     <Text fontSize="sm" color="gray.600">Password:</Text>
     <Flex align="center" gap={2}>
-      <Text fontSize="sm" color="blue.600">tryme@123</Text>
+      <Text fontSize="sm" color="blue.600">trythis@123</Text>
       <Tooltip label="Copy Password" fontSize="xs">
         <IconButton
           size="xs"
@@ -135,6 +135,9 @@ const Login = () => {
       </Tooltip>
     </Flex>
   </Flex>
+  <Text fontSize="xs" color="gray.500" mt={3} textAlign="center">
+    ⚠️ The server may take up to 50 seconds to start after the first request.
+  </Text>
 </Box>
         </form>
       </Box>
