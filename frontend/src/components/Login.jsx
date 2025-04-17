@@ -134,7 +134,7 @@ const Login = () => {
                       size="xs"
                       icon={<Copy size={14} />}
                       aria-label="Copy username"
-                      onClick={() => navigator.clipboard.writeText("guest24")}
+                      onClick={() => navigator.clipboard.writeText("guest246")}
                       variant="ghost"
                     />
                   </Tooltip>
