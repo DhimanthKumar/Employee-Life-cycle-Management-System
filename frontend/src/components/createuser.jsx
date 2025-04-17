@@ -38,7 +38,7 @@ const Createuser = () => {
   const [department, setDepartment] = useState("");
   const [managerslist, setManagerslist] = useState([]);
   const [manager, setManager] = useState("");
-
+  
   // Fetch managers list
   useEffect(() => {
     axios
@@ -88,7 +88,7 @@ const Createuser = () => {
       "department": department,
       "manager": manager,
     };
-    console.log(payload);
+    // console.log(payload);
     if (phone.length === 10) payload = { ...payload, phone };
 
     axios
@@ -104,19 +104,19 @@ const Createuser = () => {
             duration: 3000,
             isClosable: true,
           });
-          // navigate("status", { state: { message: "User created successfully" } });
+          navigate("status", { state: { message: "User created successfully" } });
         }
       })
       .catch((response) => {
-        // toast({
-        //   title: "Error",
-        //   description: "User creation failed",
-        //   status: "error",
-        //   duration: 3000,
-        //   isClosable: true,
-        // });
-        console.log(response)
-        // navigate("status", { state: { message: "User creation failed" } });
+        toast({
+          title: "Error",
+          description: "User creation failed",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        // console.log(response)
+        navigate("status", { state: { message: "User creation failed" } });
       });
   };
 

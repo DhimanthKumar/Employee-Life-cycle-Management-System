@@ -8,11 +8,11 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useContext } from "react";
 import axios from "axios";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
-
+import { AuthContext } from "./authcontext";
 const MotionBox = motion(Box);
 
 const Createteam = () => {
@@ -23,7 +23,7 @@ const Createteam = () => {
   const [description, setDescription] = useState("");
   const navigate = useNavigate();
   const toast = useToast();
-
+  const { userdata, isAuthenticated } = useContext(AuthContext);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/employees/subordinates`, {
@@ -58,7 +58,7 @@ const Createteam = () => {
       team_leader_id: selectedLeader ? selectedLeader.value : null,
       member_ids: selectedMembers.map((member) => member.value),
     };
-
+  
     axios
       .post(`${import.meta.env.VITE_API_BASE_URL}/teams/create`, teamData, {
         headers: { Authorization: `Token ${localStorage.getItem("token")}` },
