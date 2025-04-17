@@ -123,7 +123,7 @@ const Login = () => {
   <Flex align="center" justify="space-between">
     <Text fontSize="sm" color="gray.600">Password:</Text>
     <Flex align="center" gap={2}>
-      <Text fontSize="sm" color="blue.600">TryMe@789</Text>
+      <Text fontSize="sm" color="blue.600">tryme@123</Text>
       <Tooltip label="Copy Password" fontSize="xs">
         <IconButton
           size="xs"
