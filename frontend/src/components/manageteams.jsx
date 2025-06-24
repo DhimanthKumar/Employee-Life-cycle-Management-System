@@ -26,9 +26,9 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { AuthContext } from "./authcontext";
-import TaskCard from "./taskcard";
+import TaskCard from "./taskcard2";
 import TaskEditingModal from "./taskeditingmodal";
-
+import { Tooltip } from "@chakra-ui/react";
 const Manageteams = () => {
   const { isteamleader, teamsleading, teammemberinfo, userdata } = useContext(AuthContext);
   const [selectedTeam, setSelectedTeam] = useState(null);
@@ -259,71 +259,70 @@ const Manageteams = () => {
     ];
 
     return allMembers.map((member) => {
-      const memberTasks = teamData.tasks.filter(task =>
-        task.assigned_to && task.assigned_to.id === member.id
-      );
+  const memberTasks = teamData.tasks.filter(task =>
+    task.assigned_to && task.assigned_to.id === member.id
+  );
+  const visibleTasks = memberTasks.filter(task => task.status !== 'blocked');
 
-      return (
-        <Box
-          key={member.id}
-          mb={4}
-          p={4}
-          borderWidth={1}
-          borderRadius="lg"
-          boxShadow="md"
-          bg={cardBg}
-        >
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Flex align="center">
-                <Text fontSize="xl" fontWeight="bold" color="teal.500" mr={2}>
-                  {member.username}
-                </Text>
-                <Badge
-                  colorScheme={member.isLeader ? "purple" : "teal"}
-                  variant="subtle"
-                >
-                  {member.role}
-                </Badge>
-              </Flex>
-              <Stack spacing={1} mt={1}>
-                <Text fontSize="sm">Email: {member.email}</Text>
-                <Text fontSize="sm">Team: {teamData.team_name}</Text>
-              </Stack>
-            </Box>
-            <Button
-              size="sm"
-              colorScheme="teal"
-              variant="outline"
-              onClick={() => toggleMemberTasks(member.id)}
-              isDisabled={memberTasks.length === 0}
+  return (
+    <Box
+      key={member.id}
+      mb={4}
+      p={4}
+      borderWidth={1}
+      borderRadius="lg"
+      boxShadow="md"
+      bg={cardBg}
+    >
+      <Flex justify="space-between" align="center">
+        <Box>
+          <Flex align="center">
+            <Text fontSize="xl" fontWeight="bold" color="teal.500" mr={2}>
+              {member.username}
+            </Text>
+            <Badge
+              colorScheme={member.isLeader ? "purple" : "teal"}
+              variant="subtle"
             >
-              {expandedMemberId === member.id ? "Hide Tasks" : "View Tasks"}
-            </Button>
+              {member.role}
+            </Badge>
           </Flex>
-
-          <Collapse in={expandedMemberId === member.id} animateOpacity>
-            <Box mt={3}>
-              {memberTasks.length > 0 ? (
-                memberTasks.map((task) => (
-                  <Box key={task.id} w="90%" mx="auto" mb={4}>
-                    <TaskCard 
-                      task={task} 
-                      onEdit={() => handleEditTask(task)}
-                      onToggleStatus={(newStatus, newProgress) => 
-                        handleToggleTaskStatus(task.id, newStatus, newProgress)
-                      }
-                    />
-                  </Box>
-                ))
-              ) : (
-                <Text fontStyle="italic" p={3}>No tasks assigned</Text>
-              )}
-            </Box>
-          </Collapse>
+          <Stack spacing={1} mt={1}>
+            <Text fontSize="sm">Email: {member.email}</Text>
+            <Text fontSize="sm">Team: {teamData.team_name}</Text>
+          </Stack>
         </Box>
-      );
-    });
+        <Button
+          size="sm"
+          colorScheme="teal"
+          variant="outline"
+          onClick={() => toggleMemberTasks(member.id)}
+        >
+          {expandedMemberId === member.id ? "Hide Tasks" : "View Tasks"}
+        </Button>
+      </Flex>
+
+      <Collapse in={expandedMemberId === member.id} animateOpacity>
+        <Box mt={3}>
+          {visibleTasks.length > 0 ? (
+            visibleTasks.map((task) => (
+              <Box key={task.id} w="90%" mx="auto" mb={4}>
+                <TaskCard
+                  task={task}
+                  onToggleStatus={(newStatus, newProgress) =>
+                    handleToggleTaskStatus(task.id, newStatus, newProgress)
+                  }
+                />
+              </Box>
+            ))
+          ) : (
+            <Text fontStyle="italic" p={3}>No tasks assigned</Text>
+          )}
+        </Box>
+      </Collapse>
+    </Box>
+  );
+});
   };
 
   return isteamleader ? (
@@ -451,12 +450,7 @@ const Manageteams = () => {
 
       {renderTeamMembers()}
 
-      <TaskEditingModal
-        isOpen={isEditModalOpen}
-        onClose={onEditModalClose}
-        task={editingTask}
-        onSave={handleTaskUpdate}
-      />
+      
     </Box>
   ) : (
     <Text fontSize="xl" color="red.500" textAlign="center">

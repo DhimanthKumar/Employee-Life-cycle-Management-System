@@ -145,6 +145,10 @@ def validate_team_leader_and_members(sender, instance, created, **kwargs):
                 # Compare authority levels: team leader should have higher authority
                 if member_role.authority_level >= team_leader_role.authority_level:
                     raise ValidationError(f"The team leader's authority level must be higher than that of {member.user.username}.")
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.db import models
+
 class TaskAssignment(models.Model):
     PRIORITY_CHOICES = [
         ('low', 'Low'),
@@ -168,13 +172,12 @@ class TaskAssignment(models.Model):
     completed = models.BooleanField(default=False)
     assigned_at = models.DateTimeField(auto_now_add=True)
 
-    # New fields
     progress = models.PositiveIntegerField(default=0, help_text="Progress in percentage (0-100)")
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='not_started')
 
     def clean(self):
-        # Ensure assigned_to is either team member or leader
+        # Ensure assigned_to is part of the team
         if self.assigned_to and self.team:
             is_member = self.team.members.filter(id=self.assigned_to.id).exists()
             is_leader = self.team.team_leader and self.team.team_leader.id == self.assigned_to.id
@@ -184,13 +187,16 @@ class TaskAssignment(models.Model):
                     f"Employee {self.assigned_to.user.username} must be either a member or the leader of the team '{self.team.name}' to be assigned a task."
                 )
 
-        # Ensure due_date is today or later
+        # Disallow setting due_date in the past (on create or update)
         if self.due_date and self.due_date < timezone.now().date():
             raise ValidationError("Due date cannot be in the past.")
 
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
+    def check_and_block(self):
+        """Automatically block the task if due date is passed."""
+        today = timezone.now().date()
+        if self.due_date and self.due_date < today and self.status not in ['completed', 'blocked']:
+            self.status = 'blocked'
+            self.save(update_fields=['status'])
 
     def __str__(self):
         return f"{self.title} -> {self.assigned_to.user.username}"

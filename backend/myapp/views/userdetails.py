@@ -2,13 +2,18 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from myapp.models import CustomUser,Employee
+from myapp.models import CustomUser,Employee,TaskAssignment
 from myapp.serializers import CustomUserSerializer
 from rest_framework import generics, status
 from rest_framework.status import HTTP_400_BAD_REQUEST
+# from .oldtaskblocker import blocktasks
 @api_view()
 @permission_classes([IsAuthenticated])
 def UserDetails(request):
+    tasks = TaskAssignment.objects.all()
+            # Automatically update status of expired tasks
+    for task in tasks:
+                task.check_and_block()
     user = request.user
     return Response({
     "id": user.employee.id,

@@ -8,6 +8,7 @@ from myapp.serializers import CustomUserSerializer,DepartmentSerializer,Employee
 from rest_framework import generics, status
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from .permissions import IsStaffUser
+from datetime import date
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_my_tasks(request):
@@ -38,14 +39,19 @@ def get_my_tasks(request):
     """
     try:
         # Get the current user's employee profile
-        employee = Employee.objects.get(user=request.user)
-        
-        # Get all tasks assigned directly to this employee
-        tasks = TaskAssignment.objects.filter(assigned_to=employee)
-        
-        serializer = TaskSerializer(tasks, many=True)
-        return Response({'Tasks': serializer.data})
-    
+            employee = Employee.objects.get(user=request.user)
+            tasks = TaskAssignment.objects.filter(assigned_to=employee)
+
+            # Automatically update status of expired tasks
+            for task in tasks:
+                task.check_and_block()
+
+            # Exclude blocked tasks from view (optional)
+            tasks = tasks.exclude(status='blocked')
+
+            serializer = TaskSerializer(tasks, many=True)
+            return Response({'Tasks': serializer.data})
+
     except Employee.DoesNotExist:
         return Response(
             {'error': 'Employee profile not found for this user.'},
