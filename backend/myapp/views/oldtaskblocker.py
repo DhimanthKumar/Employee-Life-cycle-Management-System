@@ -12,7 +12,4 @@ from datetime import date
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def blocktasks():
-            tasks = TaskAssignment.objects.all()
-            # Automatically update status of expired tasks
-            for task in tasks:
-                task.check_and_block()
+            

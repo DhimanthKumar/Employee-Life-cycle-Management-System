@@ -1,0 +1,483 @@
+{
+	"info": {
+		"_postman_id": "4d0eaff3-4603-42ab-8e9b-50a2a1a19826",
+		"name": "EmployeeFIrm Management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47124888",
+		"_collection_link": "https://payload-specialist-78100986-1324244.postman.co/workspace/Dhimanth-Kumar-Singh's-Workspac~bd629893-e972-43e8-8c34-04ef78dd106b/collection/47124888-4d0eaff3-4603-42ab-8e9b-50a2a1a19826?action=share&source=collection_link&creator=47124888"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "/api/generateToken Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"if (pm.response.code === 200) {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.environment.set(\"authToken\", jsonData.token);\r",
+									"} else {\r",
+									"    // Stop the collection run or stop further requests in this iteration\r",
+									"    postman.setNextRequest(null);\r",
+									"}\r",
+									"const token = pm.environment.get(\"authToken\");\r",
+									"if (token) {\r",
+									"    pm.request.headers.upsert({\r",
+									"        key: \"Authorization\",\r",
+									"        value: `Token ${token}`\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "{{adminusername}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{adminpassword}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/generateToken",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"generateToken"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "lalit",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "luckey123",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/Profile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"Profile"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CheckIn Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "lalit",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "luckey123",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/user-checkin-checkout",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user-checkin-checkout"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CheckIn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Check-in Status\", function () {\r",
+									"    const status = pm.response.code;\r",
+									"\r",
+									"    if (status === 200) {\r",
+									"        console.log(\"✅ Already checked in (elid)\");\r",
+									"        pm.environment.set(\"checkinStatus\", \"already checked in\");\r",
+									"    } else if (status === 201) {\r",
+									"        console.log(\"✅ Checked in now\");\r",
+									"        pm.environment.set(\"checkinStatus\", \"checked in now\");\r",
+									"    } else {\r",
+									"        console.log(`❌ Unexpected status: ${status}`);\r",
+									"        pm.environment.set(\"checkinStatus\", `Unexpected: ${status}`);\r",
+									"    }\r",
+									"\r",
+									"    // Optional assertion to ensure status is either 200 or 201\r",
+									"    pm.expect([200, 201]).to.include(status);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/user-checkin-checkout/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user-checkin-checkout",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CheckOut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/user-checkin-checkout/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user-checkin-checkout",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateUser",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate random username\r",
+									"let username = 'user_' + Math.random().toString(36).substring(2, 10);\r",
+									"\r",
+									"// Use the username to generate email\r",
+									"let email = username + '@example.com';\r",
+									"\r",
+									"// Save to environment or global variables\r",
+									"pm.environment.set(\"username\", username);\r",
+									"pm.environment.set(\"email\", email);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"securepassword123\",\r\n  \"phone\": \"9876543210\",\r\n  \"role\": \"manager\",\r\n  \"department\" : \"sales\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/create",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RolesBelowUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/get_all_roles",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get_all_roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/my-team-tasks",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"my-team-tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://127.0.0.1:8000",
+			"type": "default"
+		}
+	]
+}

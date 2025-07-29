@@ -21,7 +21,7 @@ def get_team_member_tasks(request, team_id):
         return Response({"detail": "Only the team leader can view team member tasks."}, status=status.HTTP_403_FORBIDDEN)
 
     participant_ids = list(team.members.values_list('id', flat=True)) + [team.team_leader.id]
-
+    
     # Fetch tasks only for this team and team members, excluding 'blocked' status
     task_assignments = TaskAssignment.objects.filter(
         assigned_to_id__in=participant_ids,
