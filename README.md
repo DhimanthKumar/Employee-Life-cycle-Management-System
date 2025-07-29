@@ -1,5 +1,3 @@
-# Project README
-
 ## Project Setup
 
 This project consists of a **backend** powered by Django and a **frontend** powered by React. Follow the steps below to set up and run the project.
@@ -28,7 +26,12 @@ This project consists of a **backend** powered by Django and a **frontend** powe
    python manage.py runserver
    ```
 
-   - The Django backend will be running at **http://127.0.0.1:3000**.
+   - The Django backend will be running at **http://127.0.0.1:3000**
+
+5. **Run Server with Test Database (Optional)**:
+   ```bash
+   python manage.py runserver --settings=backend.test_settings
+   ```
 
 ---
 
@@ -49,7 +52,20 @@ This project consists of a **backend** powered by Django and a **frontend** powe
    npm run dev
    ```
 
-   - The React frontend will be running at **http://127.0.0.1:5173**.
+   - The React frontend will be running at **http://127.0.0.1:5173**
+
+---
+
+### API Testing with Newman (Postman CLI)
+
+To run Postman tests using Newman:
+
+```bash
+newman run EMFStest.json -e local_env.json
+```
+
+- `EMFStest.json`: Postman collection file 
+- `local_env.json`: Postman environment file with variables (e.g., base URL, tokens)
 
 ---
 
@@ -57,3 +73,4 @@ This project consists of a **backend** powered by Django and a **frontend** powe
 
 - Ensure both the backend and frontend servers are running simultaneously for full functionality.
 - If you encounter any issues, check that all dependencies are installed correctly and the correct ports are used.
+- Use the test settings configuration to run the server with a separate test database during automated testing.
