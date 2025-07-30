@@ -1,0 +1,42 @@
+name: Django + Postman API Tests on Windows
+
+on: [push, pull_request]  # 👈 This line tells GitHub to run on every push or PR
+
+jobs:
+  test-on-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Python and Pipenv
+      run: |
+        pip install pipenv
+        pipenv install
+
+    - name: Run Django migrations
+      run: |
+        pipenv run python backend/manage.py migrate --settings=backend.test_settings
+
+    - name: Start Django server in background
+      shell: powershell
+      run: |
+        Start-Process -FilePath "pipenv" -ArgumentList "run", "python", "manage.py", "runserver", "127.0.0.1:8000", "--settings=backend.test_settings" -WorkingDirectory "${{ github.workspace }}\backend"
+        Start-Sleep -Seconds 10
+
+    - name: Install Newman
+      run: npm install -g newman
+
+    - name: Run Postman tests
+      run: newman run EMFStest.json -e local_env.json
