@@ -39,4 +39,4 @@ jobs:
       run: npm install -g newman
 
     - name: Run Postman tests
-      run: newman run EMFStest.json -e local_env.json
+      run: newman run backend/EMFStest.json -e backend/local_env.json
