@@ -35,9 +35,10 @@ jobs:
     - name: Start Django server and wait until ready
       shell: powershell
       run: |
-        Start-Process -FilePath "pipenv" -ArgumentList "run", "python", "manage.py", "runserver", "127.0.0.1:8000", "--settings=backend.test_settings" -WorkingDirectory "${{ github.workspace }}\backend"
+        cd backend
+        pipenv run python manage.py runserver 127.0.0.1:8000 --settings=backend.test_settings > server.log 2>&1 &
         
-        # Retry until server responds (max ~30 seconds)
+        # Wait for server to be ready
         $retries = 30
         for ($i = 0; $i -lt $retries; $i++) {
           try {
@@ -51,10 +52,12 @@ jobs:
           }
 
           if ($i -eq ($retries - 1)) {
+            Get-Content server.log
             Write-Error "❌ Django server failed to start in time."
             exit 1
           }
         }
+
 
 
     - name: Decode Postman environment JSON from base64
