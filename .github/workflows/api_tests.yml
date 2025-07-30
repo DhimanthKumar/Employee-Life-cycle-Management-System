@@ -1,10 +1,11 @@
 name: Django + Postman API Tests on Windows
 
-on: [push, pull_request]  # 👈 This line tells GitHub to run on every push or PR
+on: [push, pull_request]
 
 jobs:
   test-on-windows:
     runs-on: windows-latest
+    environment: EMFS  # 👈 This is the key line to access environment-scoped secrets
 
     steps:
     - name: Checkout code
@@ -23,17 +24,23 @@ jobs:
     - name: Install Python and Pipenv
       run: |
         pip install pipenv
+        cd backend
         pipenv install
 
     - name: Run Django migrations
       run: |
-        pipenv run python backend/manage.py migrate --settings=backend.test_settings
+        cd backend
+        pipenv run python manage.py migrate --settings=backend.test_settings
 
     - name: Start Django server in background
       shell: powershell
       run: |
         Start-Process -FilePath "pipenv" -ArgumentList "run", "python", "manage.py", "runserver", "127.0.0.1:8000", "--settings=backend.test_settings" -WorkingDirectory "${{ github.workspace }}\backend"
         Start-Sleep -Seconds 10
+
+    - name: Save Postman environment secret to file
+      run: |
+        echo "${{ secrets.POSTMAN_ENV_JSON }}" > backend/local_env.json
 
     - name: Install Newman
       run: npm install -g newman
