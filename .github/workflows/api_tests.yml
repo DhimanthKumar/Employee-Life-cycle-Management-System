@@ -32,11 +32,30 @@ jobs:
         cd backend
         pipenv run python manage.py migrate --settings=backend.test_settings
 
-    - name: Start Django server in background
+    - name: Start Django server and wait until ready
       shell: powershell
       run: |
         Start-Process -FilePath "pipenv" -ArgumentList "run", "python", "manage.py", "runserver", "127.0.0.1:8000", "--settings=backend.test_settings" -WorkingDirectory "${{ github.workspace }}\backend"
-        Start-Sleep -Seconds 10
+        
+        # Retry until server responds (max ~30 seconds)
+        $retries = 30
+        for ($i = 0; $i -lt $retries; $i++) {
+          try {
+            $response = Invoke-WebRequest -Uri http://127.0.0.1:8000 -UseBasicParsing -TimeoutSec 1
+            if ($response.StatusCode -eq 200) {
+              Write-Host "✅ Django server is up!"
+              break
+            }
+          } catch {
+            Start-Sleep -Seconds 1
+          }
+
+          if ($i -eq ($retries - 1)) {
+            Write-Error "❌ Django server failed to start in time."
+            exit 1
+          }
+        }
+
 
     - name: Decode Postman environment JSON from base64
       shell: powershell
