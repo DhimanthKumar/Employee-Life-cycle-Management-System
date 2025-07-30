@@ -38,23 +38,24 @@ jobs:
         cd backend
         Start-Process -NoNewWindow -FilePath "pipenv" `
           -ArgumentList "run", "python", "manage.py", "runserver", "127.0.0.1:8000", "--settings=backend.test_settings"
- 
-        # Wait for server to be ready
+
+    - name: Wait for server to start
+      shell: powershell
+      run: |
         $retries = 30
         for ($i = 0; $i -lt $retries; $i++) {
           try {
-            $response = Invoke-WebRequest -Uri http://127.0.0.1:8000 -UseBasicParsing -TimeoutSec 1
-            if ($response.StatusCode -eq 200) {
+            $res = Invoke-WebRequest -Uri http://127.0.0.1:8000 -UseBasicParsing -TimeoutSec 1
+            if ($res.StatusCode -eq 200) {
               Write-Host "✅ Django server is up!"
               break
             }
           } catch {
-            Start-Sleep -Seconds 1
+            Start-Sleep -Seconds 2
           }
 
           if ($i -eq ($retries - 1)) {
-            Get-Content server.log
-            Write-Error "❌ Django server failed to start in time."
+            Write-Error "❌ Server did not start in time"
             exit 1
           }
         }
