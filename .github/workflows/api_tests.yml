@@ -25,7 +25,9 @@ jobs:
       run: |
         pip install pipenv
         cd backend
+        pipenv --python $(which python)  # Tell pipenv to use the already installed Python 3.10
         pipenv install
+
 
     - name: Run Django migrations
       run: |
