@@ -122,21 +122,8 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "username",
-									"value": "lalit",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "luckey123",
-									"type": "text",
-									"disabled": true
-								}
-							]
+							"mode": "formdata"
+							
 						},
 						"url": {
 							"raw": "{{baseURL}}/api/Profile",
@@ -190,21 +177,8 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "username",
-									"value": "lalit",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "luckey123",
-									"type": "text",
-									"disabled": true
-								}
-							]
+							"mode": "formdata"
+							
 						},
 						"url": {
 							"raw": "{{baseURL}}/api/user-checkin-checkout",
