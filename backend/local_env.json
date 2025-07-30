@@ -1,0 +1,51 @@
+{
+	"id": "245a849f-6e52-4dca-a40e-ad0fbd0f63a8",
+	"name": "EFMS",
+	"values": [
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "adminusername",
+			"value": "lalit",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "adminpassword",
+			"value": "luckey123",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "checkinStatus",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "username",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "email",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-07-29T05:18:03.077Z",
+	"_postman_exported_using": "Postman/11.56.0"
+}

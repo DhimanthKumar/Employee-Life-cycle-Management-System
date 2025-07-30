@@ -1,10 +1,10 @@
-name: Django + Postman API Tests on Windows
+name: Django + Postman API Tests on Ubuntu
 
 on: [push, pull_request]
 
 jobs:
-  test-on-windows:
-    runs-on: windows-latest
+  test-on-ubuntu:
+    runs-on: ubuntu-latest
     environment: EMFS  # Access environment-scoped secrets
 
     steps:
@@ -25,46 +25,38 @@ jobs:
       run: |
         pip install pipenv
         cd backend
+        pipenv --python $(which python)  # Tell pipenv to use the already installed Python 3.10
         pipenv install
+
 
     - name: Run Django migrations
       run: |
         cd backend
         pipenv run python manage.py migrate --settings=backend.test_settings
 
-    - name: Start Django server and wait until ready
-      shell: powershell
+    - name: Start Django server in background
       run: |
         cd backend
-        pipenv run python manage.py runserver 127.0.0.1:8000 --settings=backend.test_settings > server.log 2>&1 &
-        
-        # Wait for server to be ready
-        $retries = 30
-        for ($i = 0; $i -lt $retries; $i++) {
-          try {
-            $response = Invoke-WebRequest -Uri http://127.0.0.1:8000 -UseBasicParsing -TimeoutSec 1
-            if ($response.StatusCode -eq 200) {
-              Write-Host "✅ Django server is up!"
-              break
-            }
-          } catch {
-            Start-Sleep -Seconds 1
-          }
+        nohup pipenv run python manage.py runserver 127.0.0.1:8000 --settings=backend.test_settings > server.log 2>&1 &
 
-          if ($i -eq ($retries - 1)) {
-            Get-Content server.log
-            Write-Error "❌ Django server failed to start in time."
+    - name: Wait for server to start
+      run: |
+        for i in {1..30}; do
+          if curl -s http://127.0.0.1:8000 > /dev/null; then
+            echo "✅ Django server is up!"
+            break
+          fi
+          echo "⏳ Waiting for server... ($i/30)"
+          sleep 2
+          if [ $i -eq 30 ]; then
+            echo "❌ Server did not start in time"
             exit 1
-          }
-        }
-
-
+          fi
+        done
 
     - name: Decode Postman environment JSON from base64
-      shell: powershell
       run: |
-        $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.POSTMAN_ENV_BASE64 }}"))
-        Set-Content -Path backend\local_env.json -Value $decoded
+        echo "${{ secrets.POSTMAN_ENV_BASE64 }}" | base64 --decode > backend/local_env.json
 
     - name: Install Newman
       run: npm install -g newman
