@@ -32,12 +32,13 @@ jobs:
         cd backend
         pipenv run python manage.py migrate --settings=backend.test_settings
 
-    - name: Start Django server and wait until ready
+    - name: Start Django server in background
       shell: powershell
       run: |
         cd backend
-        pipenv run python manage.py runserver 127.0.0.1:8000 --settings=backend.test_settings > server.log 2>&1 &
-        
+        Start-Process -NoNewWindow -FilePath "pipenv" `
+          -ArgumentList "run", "python", "manage.py", "runserver", "127.0.0.1:8000", "--settings=backend.test_settings"
+ 
         # Wait for server to be ready
         $retries = 30
         for ($i = 0; $i -lt $retries; $i++) {
