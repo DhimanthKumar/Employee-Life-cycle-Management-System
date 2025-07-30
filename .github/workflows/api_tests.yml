@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   test-on-windows:
     runs-on: windows-latest
-    environment: EMFS  # 👈 This is the key line to access environment-scoped secrets
+    environment: EMFS  # Access environment-scoped secrets
 
     steps:
     - name: Checkout code
@@ -38,9 +38,11 @@ jobs:
         Start-Process -FilePath "pipenv" -ArgumentList "run", "python", "manage.py", "runserver", "127.0.0.1:8000", "--settings=backend.test_settings" -WorkingDirectory "${{ github.workspace }}\backend"
         Start-Sleep -Seconds 10
 
-    - name: Save Postman environment secret to file
+    - name: Decode Postman environment JSON from base64
+      shell: powershell
       run: |
-        echo "${{ secrets.POSTMAN_ENV_JSON }}" > backend/local_env.json
+        $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.POSTMAN_ENV_BASE64 }}"))
+        Set-Content -Path backend\local_env.json -Value $decoded
 
     - name: Install Newman
       run: npm install -g newman
